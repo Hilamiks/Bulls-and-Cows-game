@@ -18,13 +18,40 @@ public class Main {
             takeGuess();
             checkGuess();
         }
-        System.out.println("Congrats! The secret code is "
-                + targetNumber + ".");
+        System.out.println("Congratulations! You guessed the secret code.");
     }
 
     private static void setTargetNumber() {
-        targetNumber = ((int)(Math.random()*8999)+1000)+"";
-        System.out.println("The secret code is prepared: ****.\n");
+        System.out.println("Please, enter the secret codes' length: ");
+        int secretSize = scanner.nextInt();
+        scanner.nextLine();
+        if (secretSize > 10){
+            System.out.println("Error: can't generate a secret number with a length of "+secretSize);
+        } else {
+            targetNumber = rng(secretSize);
+            System.out.println("Okay, let's start a game!");
+        }
+    }
+
+    private static String rng(int size) {
+        StringBuilder pseudoRandomString = new StringBuilder();
+        while(pseudoRandomString.length() < size) {
+            String digit = ""+randomDigit();
+            if (pseudoRandomString.indexOf(digit) == -1){
+                pseudoRandomString.append(digit);
+            }
+        }
+        return pseudoRandomString.toString();
+    }
+
+    private static char randomDigit() {
+        StringBuilder pseudoRandomString = new StringBuilder();
+        pseudoRandomString.append(System.nanoTime());
+        pseudoRandomString.reverse();
+        while(pseudoRandomString.charAt(0) == '0') {
+            pseudoRandomString.deleteCharAt(0);
+        }
+        return pseudoRandomString.charAt(1);
     }
 
     private static void takeGuess() {
@@ -51,7 +78,7 @@ public class Main {
         if (bulls == 0 && cows == 0) {
             grade = grade.concat("None");
         }
-        grade = grade.concat(". The secret code is "+targetNumber);
+        grade = grade.concat(".");
         System.out.println(grade);
     }
 
@@ -78,5 +105,6 @@ public class Main {
         }
         return bulls;
     }
+
 
 }
