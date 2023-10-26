@@ -20,22 +20,28 @@ public class Main {
             takeGuess();
             checkGuess();
         }
-        System.out.println("Congratulations! You guessed the secret code.");
+        System.out.println("The secret code was "+targetNumber);
     }
 
     private static void setTargetNumber() {
+        int secretSize = 0;
         System.out.println("Input the length of the secret code: ");
-        int secretSize = scanner.nextInt();
+        try {
+            secretSize = scanner.nextInt();
+        } catch (Exception e) {
+            System.out.println("Error: invalid length");
+            targetNumber = userNumber;
+        }
         scanner.nextLine();
-        if (secretSize > 36){
-            System.out.println("Error: can't generate a secret number with a length of "+secretSize);
+        if (secretSize > 36 || secretSize < 1){
+            System.out.println("Error: can't generate a secret number with given length");
             targetNumber = userNumber;
         } else {
             System.out.println("Input the number of possible symbols in the code: ");
             range = scanner.nextInt();
             scanner.nextLine();
-            if (range < secretSize) {
-                System.out.println("Error: range too small for the size of the secret code");
+            if (range < secretSize || range > 36) {
+                System.out.println("Error: invalid range (max 36, min the length of the code)");
                 targetNumber = userNumber;
             } else {
                 targetNumber = rng(secretSize, range);
@@ -45,8 +51,8 @@ public class Main {
                 }
                 StringBuilder rangeDisplay = new StringBuilder();
                 rangeDisplay.append(" (0-");
-                if (range < 10) {
-                    rangeDisplay.append(range).append(").");
+                if (range <= 10) {
+                    rangeDisplay.append(range-1).append(").");
                 } else {
                     rangeDisplay.append(9).append(", a-")
                             .append((char)(range+86)).append(").");
@@ -66,7 +72,7 @@ public class Main {
                 pseudoRandomString.append(digit);
             }
         }
-        System.out.println(pseudoRandomString.toString());
+        //System.out.println(pseudoRandomString.toString());
         return pseudoRandomString.toString();
     }
 
