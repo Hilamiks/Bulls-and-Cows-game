@@ -35,23 +35,24 @@ public class Main {
 
     private static String rng(int size) {
         StringBuilder pseudoRandomString = new StringBuilder();
+        String firstDigit = ""+randomDigit();
+        while(firstDigit.equals("0")) {
+            firstDigit = ""+randomDigit();
+        }
+        pseudoRandomString.append(firstDigit);
         while(pseudoRandomString.length() < size) {
             String digit = ""+randomDigit();
             if (pseudoRandomString.indexOf(digit) == -1){
                 pseudoRandomString.append(digit);
             }
         }
+        System.out.println(pseudoRandomString.toString());
         return pseudoRandomString.toString();
     }
 
-    private static char randomDigit() {
-        StringBuilder pseudoRandomString = new StringBuilder();
-        pseudoRandomString.append(System.nanoTime());
-        pseudoRandomString.reverse();
-        while(pseudoRandomString.charAt(0) == '0') {
-            pseudoRandomString.deleteCharAt(0);
-        }
-        return pseudoRandomString.charAt(1);
+    private static StringBuilder randomDigit() {
+        StringBuilder c = new StringBuilder();
+        return c.append((int)(Math.random()*10));
     }
 
     private static void takeGuess() {
