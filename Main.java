@@ -12,6 +12,8 @@ public class Main {
 
     private static int turnCounter = 0;
 
+    private static int range = 0;
+
     public static void main(String[] args) {
         setTargetNumber();
         while(!userNumber.equals(targetNumber)){
@@ -22,26 +24,44 @@ public class Main {
     }
 
     private static void setTargetNumber() {
-        System.out.println("Please, enter the secret codes' length: ");
+        System.out.println("Input the length of the secret code: ");
         int secretSize = scanner.nextInt();
         scanner.nextLine();
-        if (secretSize > 10){
+        if (secretSize > 36){
             System.out.println("Error: can't generate a secret number with a length of "+secretSize);
+            targetNumber = userNumber;
         } else {
-            targetNumber = rng(secretSize);
-            System.out.println("Okay, let's start a game!");
+            System.out.println("Input the number of possible symbols in the code: ");
+            range = scanner.nextInt();
+            scanner.nextLine();
+            if (range < secretSize) {
+                System.out.println("Error: range too small for the size of the secret code");
+                targetNumber = userNumber;
+            } else {
+                targetNumber = rng(secretSize, range);
+                StringBuilder asteriskCode = new StringBuilder(secretSize);
+                for (int i = 0; i < secretSize; i++) {
+                    asteriskCode.append('*');
+                }
+                StringBuilder rangeDisplay = new StringBuilder();
+                rangeDisplay.append(" (0-");
+                if (range < 10) {
+                    rangeDisplay.append(range).append(").");
+                } else {
+                    rangeDisplay.append(9).append(", a-")
+                            .append((char)(range+86)).append(").");
+
+                }
+                System.out.println("The secret is prepared: "+asteriskCode+rangeDisplay);
+                System.out.println("Okay, let's start a game!");
+            }
         }
     }
 
-    private static String rng(int size) {
+    private static String rng(int size, int range) {
         StringBuilder pseudoRandomString = new StringBuilder();
-        String firstDigit = ""+randomDigit();
-        while(firstDigit.equals("0")) {
-            firstDigit = ""+randomDigit();
-        }
-        pseudoRandomString.append(firstDigit);
         while(pseudoRandomString.length() < size) {
-            String digit = ""+randomDigit();
+            String digit = ""+randomSymbol();
             if (pseudoRandomString.indexOf(digit) == -1){
                 pseudoRandomString.append(digit);
             }
@@ -50,9 +70,15 @@ public class Main {
         return pseudoRandomString.toString();
     }
 
-    private static StringBuilder randomDigit() {
+    private static StringBuilder randomSymbol() {
         StringBuilder c = new StringBuilder();
-        return c.append((int)(Math.random()*10));
+        int rand = (int)(Math.random()*(range));
+        if (rand<10) {
+            return c.append(rand);
+        } else {
+            char d = (char)(rand+87);
+            return c.append(d);
+        }
     }
 
     private static void takeGuess() {
@@ -89,7 +115,7 @@ public class Main {
             for (int j = 0; j < userNumber.length(); j++) {
                 if (c[i] == d[j] && i != j) {
                     cows++;
-                    d[j]='x';
+                    d[j]='_';
                 }
             }
         }
@@ -101,7 +127,7 @@ public class Main {
         for (int i = 0; i < targetNumber.length(); i++) {
             if (c[i] == d[i]) {
                 bulls++;
-                d[i] = 'x';
+                d[i] = '_';
             }
         }
         return bulls;
